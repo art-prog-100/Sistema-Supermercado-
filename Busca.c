@@ -4,6 +4,36 @@
 #include <string.h>
 #include <stdlib.h>
 
+// --- BUSCA BINÁRIA (Funcionário) ---
+TFunc *buscaBinariaFunc(int chave, FILE *in, int tamanhoBase) {
+    int inicio = 0;
+    int fim = tamanhoBase - 1;
+    int comp = 0;
+    clock_t tempo_inicio = clock();
+
+    while (inicio <= fim) {
+        comp++;
+        int meio = (inicio + fim) / 2;
+        
+        fseek(in, meio * sizeof(TFunc), SEEK_SET);
+        
+        TFunc *f = le(in);
+        if (!f) break;
+
+        if (f->cod == chave) {
+            clock_t tempo_fim = clock();
+            printf("\n[Busca Binária Func] Comparações: %d | Tempo: %f s", comp, (double)(tempo_fim - tempo_inicio) / CLOCKS_PER_SEC);
+            return f;
+        }
+
+        if (f->cod < chave) inicio = meio + 1;
+        else fim = meio - 1;
+        
+        free(f);
+    }
+    return NULL;
+}
+
 // --- BUSCA SEQUENCIAL (Funcionário) ---
 TFunc *buscaSequencialFunc(int chave, FILE *in) {
     TFunc *f = NULL;
@@ -51,6 +81,24 @@ TProduto *buscaBinariaProd(int chave, FILE *in, int tamanhoBase) {
             inicio = meio + 1;
         } else {
             fim = meio - 1;
+        }
+        free(p);
+    }
+    return NULL;
+}
+
+TProduto *buscaSequencialProd(int chave, FILE *in) {
+    TProduto *p = NULL;
+    int comp = 0;
+    clock_t tempo_inicio = clock();
+
+    rewind(in);
+    while ((p = leProduto(in)) != NULL) {
+        comp++;
+        if (p->cod == chave) {
+            clock_t tempo_fim = clock();
+            printf("\n[Busca Sequencial Prod] Comparações: %d | Tempo: %f s", comp, (double)(tempo_fim - tempo_inicio) / CLOCKS_PER_SEC);
+            return p;
         }
         free(p);
     }
