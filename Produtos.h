@@ -17,7 +17,7 @@ TProduto *leProduto(FILE *in);
 
 void salvarpro(TProduto *prod, FILE *out);
 
-void removerpro(TProduto *prod);
+void removerpro(TProduto **prod);
 
 void imprimepro(TProduto *prod);
 

@@ -24,7 +24,7 @@ void salva(TFunc *func, FILE *out);
 // Retorna um ponteiro para funcionario lido do arquivo
 TFunc *le(FILE *in);
 
-void removerfunc(TFunc *func);
+void removerfunc(TFunc **func);
 
 // Imprime funcionario
 void imprime(TFunc *func); 
@@ -36,3 +36,8 @@ void imprime(TFunc *func);
 
 
 #endif // FUNCIONARIOSSM_H_INCLUDED
+
+
+
+
+

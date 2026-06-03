@@ -17,32 +17,46 @@ TProduto *produto(int cod, char *nome, char *categoria, int estoque, double pre�
     prod->preço = preço;
     return prod;
 }
-
 TProduto *leProduto(FILE *in){
+    // 1. Aloca memória para um novo produto
     TProduto *prod = (TProduto *) malloc(sizeof(TProduto));
     
     if (prod == NULL) return NULL;
 
-    if (fread(prod, sizeof(TProduto), 1, in) < 1) {
-        free(prod);
+    // 2. Tenta ler o primeiro campo (código). 
+    // Se o fread retornar 0, significa que chegamos ao fim do arquivo (EOF).
+    if (0 >= fread(&prod->cod, sizeof(int), 1, in)) {
+        free(prod); // Libera a memória alocada se não houver nada para ler
         return NULL;
     }
+
+    // 3. Lê os demais campos na exata ordem em que foram salvos no salvarpro
+    fread(prod->nome, sizeof(char), sizeof(prod->nome), in);
+    fread(prod->categoria, sizeof(char), sizeof(prod->categoria), in);
+    fread(&prod->estoque, sizeof(int), 1, in);
+    fread(&prod->preço, sizeof(double), 1, in);
 
     return prod;
 }
 
 void salvarpro(TProduto *prod, FILE *out){
-    fwrite(prod, sizeof(TProduto), 1, out);
+    fwrite(&prod->cod, sizeof(int), 1, out);
+    //func->nome ao inves de &prod->nome, pois string ja eh um ponteiro
+    fwrite(prod->nome, sizeof(char), sizeof(prod->nome), out);
+    fwrite(prod->categoria, sizeof(char), sizeof(prod->categoria), out);
+    fwrite(&prod->estoque, sizeof(int), 1, out);    
+    fwrite(&prod->preço, sizeof(double), 1, out);
 }
 
-void removerpro(TProduto *prod){
-    free(prod);
-    prod = NULL;
-    if(prod != NULL){
-        printf("\nERRO na remoção do produto");
-    } else{
-        printf("\nPRODUTO REMOVIDO COM SUCESSO\n");
+void removerpro(TProduto **prod){
+  if (prod == NULL || *prod == NULL) {
+        printf("\nErro: ponteiro inválido.\n");
+        return;
     }
+    free(*prod);      // libera a memória no heap
+    *prod = NULL;     // zera o ponteiro ORIGINAL do chamador
+
+    printf("\nProduto removido com sucesso.\n");
 }
 
 void imprimepro(TProduto *prod){
@@ -85,4 +99,3 @@ void mudarestoque(TProduto *prod, int novoEstoque){
     printf("Dados atualizados com sucesso");
 
 }
-

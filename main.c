@@ -6,54 +6,55 @@
 #include "Busca.h"
 
 int main() {
-    // Abertura das bases
+    // Usar "wb+" para criar bases limpas (ou "ab+" para continuar de onde parou)
     FILE *arqFunc = fopen("funcionarios.dat", "wb+");
     FILE *arqCli  = fopen("clientes.dat", "wb+");
     FILE *arqProd = fopen("produtos.dat", "wb+");
 
-    // --- 1. FUNCIONARIOS ---
-    TFunc *f = funcionario(10, "Carlos Gerente", "111.111.111-11", "01/01/80", "Gerente", 5000.0);
-    salva(f, arqFunc);
-    
-    TFunc *fBusca = buscaSequencialFunc(10, arqFunc);
-    if(fBusca) {
-        mudarTrabalho(fBusca, "Diretor", 8000.0);
-        imprime(fBusca);
-        removerfunc(fBusca); // Usa a função de remoção
-    }
-    free(f); // Libera o original
+    if (!arqFunc || !arqCli || !arqProd) return 1;
 
-    // --- 2. CLIENTES ---
-    TCliente *c = cliente("Joao Silva", "123.456.789-00", "9999-8888");
-    salvacli(c, arqCli);
-    
-    TCliente *cBusca = buscaSequencialCli("123.456.789-00", arqCli);
-    if(cBusca) {
-        imprimecli(cBusca);
-        removercli(cBusca); 
-    }
-    free(c);
-
-    // --- 3. PRODUTOS ---
-    TProduto *p = produto(200, "Teclado", "Informatica", 10, 150.0);
-    salvarpro(p, arqProd);
-    
-    TProduto *pBusca = buscaBinariaProd(200, arqProd, 1);
-    if(pBusca) {
-        mudarpreço(pBusca, 140.0); 
-        mudarestoque(pBusca, 9);    
+    // --- 1. POPULANDO BASES (100 itens cada) ---
+    for (int i = 1; i <= 100; i++) {
+        char buffer[50];
         
-        // Persistência: Atualiza o arquivo
-        fseek(arqProd, -sizeof(TProduto), SEEK_CUR);
+        // Funcionarios
+        sprintf(buffer, "Funcionario %d", i);
+        TFunc *f = funcionario(i, buffer, "000.000.000-00", "01/01/1990", "Operacional", 2000.0);
+        salva(f, arqFunc);
+        free(f);
+
+        // Clientes
+        sprintf(buffer, "Cliente %d", i);
+        TCliente *c = cliente(buffer, "111.111.111-11", "9999-9999");
+        salvacli(c, arqCli);
+        free(c);
+
+        // Produtos
+        sprintf(buffer, "Produto %d", i);
+        TProduto *p = produto(i, buffer, "Geral", 50, 10.0);
+        salvarpro(p, arqProd);
+        free(p);
+    }
+
+    // --- 2. TESTE DE ATUALIZAÇÃO EM MASSA (Exemplo: Alterar item 50) ---
+    
+    // Atualizando Produto 50
+    TProduto *pBusca = buscaBinariaProd(50, arqProd, 100);
+    if (pBusca) {
+        mudarpreço(pBusca, 99.9);
+        fseek(arqProd, (50 - 1) * sizeof(TProduto), SEEK_SET);
         salvarpro(pBusca, arqProd);
-        
-        imprimepro(pBusca);
-        removerpro(pBusca);
+        free(pBusca);
     }
-    free(p);
 
+    // --- 3. REMOÇÃO DE UM ITEM ---
+    // (Lembre-se que em arquivos binários, remover é complexo; 
+    // geralmente marca-se o registro como "removido" ou copia-se o arquivo sem ele)
+    
     fclose(arqFunc);
     fclose(arqCli);
     fclose(arqProd);
+    
+    printf("Operacoes concluidas com sucesso.\n");
     return 0;
 }
