@@ -32,27 +32,17 @@ void mudarTrabalho(TFunc *func, char *novoTrabalho, double novoSalario) {
     printf("Dados atualizados com sucesso!\n");
 }
 
-void salva(TFunc *func, FILE *out){    
-    fwrite(&func->cod, sizeof(int), 1, out);
-    //func->nome ao inves de &func->nome, pois string ja eh um ponteiro
-    fwrite(func->nome, sizeof(char), sizeof(func->nome), out);
-    fwrite(func->cpf, sizeof(char), sizeof(func->cpf), out);
-    fwrite(func->data_nascimento, sizeof(char), sizeof(func->data_nascimento), out);
-    fwrite(func->trabalho, sizeof(char), sizeof(func->trabalho), out);
-    fwrite(&func->salario, sizeof(double), 1, out);
+void salva(TFunc *func, FILE *out) {
+    fwrite(func, sizeof(TFunc), 1, out);
 }
 
 TFunc *le(FILE *in) {
     TFunc *func = (TFunc *) malloc(sizeof(TFunc));
-    if (0 >= fread(&func->cod, sizeof(int), 1, in)) {
+    if (!func) return NULL;
+    if (fread(func, sizeof(TFunc), 1, in) < 1) {
         free(func);
         return NULL;
     }
-    fread(func->nome, sizeof(char), sizeof(func->nome), in);
-    fread(func->cpf, sizeof(char), sizeof(func->cpf), in);
-    fread(func->data_nascimento, sizeof(char), sizeof(func->data_nascimento), in);
-    fread(func->trabalho, sizeof(char), sizeof(func->trabalho), in);
-    fread(&func->salario, sizeof(double), 1, in);
     return func;
 }
 
@@ -65,7 +55,7 @@ void removerfunc(TFunc **func){
     *func = NULL;     // zera o ponteiro ORIGINAL do chamador
 
     printf("\nFuncionário removido com sucesso.\n");
-}
+} 
 
 void imprime(TFunc *func) {
     printf("**********************************************");

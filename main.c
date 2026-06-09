@@ -44,12 +44,15 @@ int main() {
         mudarpreço(pBusca, 99.9);
         fseek(arqProd, (50 - 1) * sizeof(TProduto), SEEK_SET);
         salvarpro(pBusca, arqProd);
+
+        printf("\n");
+        imprimepro(pBusca);
+        printf("\n");
+
         free(pBusca);
     }
 
     // --- 3. REMOÇÃO DE UM ITEM ---
-    // (Lembre-se que em arquivos binários, remover é complexo; 
-    // geralmente marca-se o registro como "removido" ou copia-se o arquivo sem ele)
     
     fclose(arqFunc);
     fclose(arqCli);
