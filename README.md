@@ -1,92 +1,107 @@
 # Sistema de Gerenciamento de Supermercado
 
-Este projeto consiste em um sistema desenvolvido em linguagem C para a gestão de funcionários, clientes e produtos. O software utiliza arquivos binários para garantir que os dados sejam armazenados de forma persistente entre as execuções.
+Projeto desenvolvido em C para a disciplina de Algoritmos e Estruturas de Dados II (AEDII). Implementa um sistema completo de gestão de funcionários, clientes e produtos, com persistência em arquivos binários, algoritmos de busca, ordenação em disco e intercalação de partições.
 
 ---
 
-### Funcionalidades Principais
+## Funcionalidades Principais
 
-* **Persistência de Dados**: Armazenamento de registros de funcionários, clientes e produtos em arquivos `.dat` dentro da pasta `dados/`.
-* **Impressão de Dados**: Funções dedicadas para exibir as informações completas de cada entidade (código, nome, CPF, estoque, preço, etc.) no terminal, facilitando a visualização e auditoria do sistema.
-* **Remoção de Registros**: O sistema permite a liberação de memória dos objetos carregados (RAM), garantindo uma gestão eficiente dos recursos durante a execução do programa.
-* **Busca Binária**: Implementada para a localização otimizada de produtos através de seus códigos de identificação, reduzindo o número de comparações necessárias.
-* **Busca Sequencial**: Utilizada para localizar funcionários e clientes na base de dados através de chaves primárias ou CPF.
-* **Ordenação em Disco**: Implementação do algoritmo Selection Sort diretamente sobre arquivos binários, permitindo ordenar bases de dados sem carregar todos os registros na memória RAM simultaneamente.
-* **Geração de Partições Ordenadas**: Implementação do método de Seleção por Substituição, que divide um arquivo grande em partições menores já ordenadas internamente, armazenadas na pasta `particoes/`.
+- **Persistência de Dados**: Registros de funcionários, clientes e produtos armazenados em arquivos `.dat` na pasta `dados/`.
+- **Leitura e Impressão**: Funções dedicadas para exibir no terminal as informações completas de cada entidade (código, nome, CPF, estoque, preço, etc.).
+- **Atualização de Registros**: Alteração de cargo/salário de funcionários, preço e estoque de produtos diretamente no arquivo binário.
+- **Remoção de Registros**: Liberação segura de memória (RAM) dos objetos carregados, zerando o ponteiro original do chamador.
+- **Busca Sequencial**: Localização de funcionários (por código), clientes (por CPF) e produtos (por código) percorrendo o arquivo registro a registro.
+- **Busca Binária**: Localização otimizada de funcionários e produtos por código, com divisão logarítmica do espaço de busca — exige base ordenada.
+- **Ordenação em Disco**: Algoritmo Selection Sort aplicado diretamente sobre o arquivo binário, sem carregar toda a base em memória RAM.
+- **Geração de Partições Ordenadas**: Método de Seleção por Substituição — divide um arquivo grande em partições menores já ordenadas internamente, armazenadas em `particoes/`.
+- **Intercalação por Árvore de Vencedores**: Combina as partições geradas em um único arquivo final ordenado usando uma árvore binária de vencedores.
+- **Suite de Testes Automatizados**: Executa e cronometra os algoritmos de ordenação e intercalação para bases de 1 000, 10 000, 100 000 e 500 000 registros, gravando logs em `logs/`.
 
 ---
 
-### Estrutura do Projeto
+## Estrutura do Projeto
+
+```
 sistema_supermercado/
-
 ├── main.c
-
 ├── Makefile
-
 │
-
-├── Cliente.c / Cliente.h
-
-├── FuncionariosSM.c / FuncionariosSM.h
-
-├── Produtos.c / Produtos.h
-
-├── Busca.c / Busca.h
-
-├── OrdenacaoDisco.c / OrdenacaoDisco.h
-
-├── Particoes.c / Particoes.h
-
+├── Cliente.c / Cliente.h           — Cadastro e operações de clientes
+├── FuncionariosSM.c / FuncionariosSM.h  — Cadastro e operações de funcionários
+├── Produtos.c / Produtos.h         — Cadastro e operações de produtos
+├── Busca.c / Busca.h               — Algoritmos de busca sequencial e binária
+├── OrdenacaoDisco.c / OrdenacaoDisco.h  — Selection Sort direto em arquivo
+├── Particoes.c / Particoes.h       — Geração de partições (Seleção por Substituição)
+├── Intercalacao.c / Intercalacao.h — Intercalação por Árvore de Vencedores
+├── Testes.c / Testes.h             — Suite de testes e benchmarks automáticos
 │
-
 ├── dados/
-
 │   ├── funcionarios.dat
-
 │   ├── clientes.dat
-
-│   └── produtos.dat
-
+│   ├── produtos.dat
+│   ├── produtos_final.dat
+│   └── produtos_<N>.dat / produtos_<N>_final.dat  (gerados pelos testes)
 │
-
-├── pparticoes/
-
+├── particoes/
 │   ├── part1.dat
-
 │   ├── part2.dat
-
 │   └── ...
-
 │
-
 └── logs/
-
-├── log_1000.txt
-
-├── log_10000.txt
-
-├── log_100000.txt
-
-└── log_500000.txt
+    ├── log_disco_1000.txt
+    ├── log_particoes_1000.txt
+    └── ...
+```
 
 ---
 
-### Módulos
+## Módulos
 
-* **FuncionariosSM**: Gestão de dados de colaboradores, incluindo cargo e salário.
-* **Cliente**: Gestão de informações cadastrais de clientes e CPF.
-* **Produtos**: Gestão de inventário, categorias e controle de preços.
-* **Busca**: Módulo centralizador dos algoritmos de busca sequencial e binária.
-* **OrdenacaoDisco**: Ordenação de registros diretamente em arquivo binário via Selection Sort, sem necessidade de carregar toda a base em memória.
-* **Particoes**: Geração de partições ordenadas via Seleção por Substituição, utilizando um buffer configurável em RAM para processar bases de grande volume.
+| Arquivo | Responsabilidade |
+|---|---|
+| `FuncionariosSM` | Criação, leitura, impressão, atualização de cargo/salário e remoção de funcionários |
+| `Cliente` | Criação, leitura, impressão e remoção de clientes |
+| `Produtos` | Criação, leitura, impressão, atualização de preço/estoque e remoção de produtos |
+| `Busca` | Busca sequencial (Func, Cli, Prod) e busca binária (Func, Prod) |
+| `OrdenacaoDisco` | Selection Sort em arquivo binário e verificação de ordenação |
+| `Particoes` | Geração de partições ordenadas via Seleção por Substituição; retorna o número de partições geradas |
+| `Intercalacao` | Intercalação de N partições em arquivo final usando Árvore de Vencedores |
+| `Testes` | Geração de bases desordenadas, benchmark dos algoritmos e gravação de logs |
 
 ---
 
-### Como Compilar e Executar
+## Como Compilar e Executar
 
-O projeto utiliza um Makefile para automatizar o processo de construção, criação de pastas e linkagem dos módulos. Certifique-se de ter o compilador GCC e a ferramenta Make instalados.
+Pré-requisitos: GCC e Make instalados.
 
-1. Para compilar todos os módulos, criar as pastas necessárias e executar: make run
-2. Para apenas compilar: make
-3. Para remover arquivos objeto, executável e todos os arquivos gerados: make clean
+```bash
+# Compilar, criar pastas e executar:
+make run
 
+# Apenas compilar:
+make
+
+# Remover arquivos objeto, executável e dados gerados:
+make clean
+```
+
+> **Atenção**: A suite de testes (`executaTodos()`) processa bases de até 500 000 registros. A etapa de Selection Sort para 500 000 elementos pode levar vários minutos, pois trata-se de um algoritmo O(n²) operando sobre disco.
+
+---
+
+## Fluxo do main.c
+
+1. Abre/cria as bases binárias em `dados/`
+2. Popula cada base com 100 registros
+3. Lê e imprime o primeiro funcionário e o primeiro cliente usando `le()` / `lecli()`
+4. Busca sequencial de funcionário (cod=42) — demonstra `buscaSequencialFunc()`
+5. Busca binária de funcionário (cod=75) — demonstra `buscaBinariaFunc()`
+6. Busca sequencial de cliente por CPF — demonstra `buscaSequencialCli()`
+7. Busca sequencial de produto (cod=10) — demonstra `buscaSequencialProd()`
+8. Busca binária de produto (cod=50) + alteração de preço — demonstra `buscaBinariaProd()` e `mudarpreço()`
+9. Alteração de estoque do produto 20 — demonstra `mudarestoque()`
+10. Alteração de cargo/salário do funcionário 5 — demonstra `mudarTrabalho()`
+11. Remoção de um funcionário, cliente e produto da memória — demonstra `removerfunc()`, `removercli()`, `removerpro()`
+12. Ordenação do arquivo de produtos em disco — demonstra `ordenacaoSelecaoDisco()`
+13. Geração de partições + intercalação — demonstra `geraParticoes()` e `intercalaParticoes()`
+14. Suite completa de testes e benchmarks — demonstra `executaTodos()`

@@ -1,7 +1,7 @@
 # Variáveis de compilação
 CC = gcc
 CFLAGS = -Wall -Wextra -g
-OBJ = main.o Cliente.o FuncionariosSM.o Produtos.o Busca.o OrdenacaoDisco.o Particoes.o
+OBJ = main.o Cliente.o FuncionariosSM.o Produtos.o Busca.o OrdenacaoDisco.o Particoes.o Intercalacao.o Testes.o
 EXEC = sistema_supermercado
 
 # Pastas de saída
@@ -19,7 +19,7 @@ $(EXEC): $(OBJ)
 	$(CC) $(OBJ) -o $(EXEC) -lm
 
 # Compilação dos módulos
-main.o: main.c Cliente.h FuncionariosSM.h Produtos.h Busca.h OrdenacaoDisco.h Particoes.h
+main.o: main.c Cliente.h FuncionariosSM.h Produtos.h Busca.h OrdenacaoDisco.h Particoes.h Intercalacao.h Testes.h
 	$(CC) $(CFLAGS) -c main.c
 
 Cliente.o: Cliente.c Cliente.h
@@ -39,6 +39,12 @@ OrdenacaoDisco.o: OrdenacaoDisco.c OrdenacaoDisco.h Produtos.h
 
 Particoes.o: Particoes.c Particoes.h Produtos.h
 	$(CC) $(CFLAGS) -c Particoes.c
+
+Intercalacao.o: Intercalacao.c Intercalacao.h Produtos.h
+	$(CC) $(CFLAGS) -c Intercalacao.c
+
+Testes.o: Testes.c Testes.h Produtos.h OrdenacaoDisco.h Particoes.h Intercalacao.h
+	$(CC) $(CFLAGS) -c Testes.c
 
 # Limpeza completa
 clean:

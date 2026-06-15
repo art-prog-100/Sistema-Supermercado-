@@ -6,7 +6,7 @@
 #include "Cliente.h"
 
 
-void geraParticoes(const char *nomeEntrada, int totalRegistros, int tamBuffer);
+int geraParticoes(const char *nomeEntrada, int totalRegistros, int tamBuffer);
 
 int menorNoBuffer(TProduto *buffer, int *congelados, int tamBuffer);
 
