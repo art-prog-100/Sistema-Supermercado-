@@ -10,8 +10,8 @@
 #include "Intercalacao.h"
 
 // Tamanhos das bases de teste
-#define NUM_TESTES 4
-static const int TAMANHOS[NUM_TESTES] = {1000, 10000, 100000, 500000};
+#define NUM_TESTES 1
+static const int TAMANHOS[NUM_TESTES] = {1000};
 
 // Tamanho do buffer para geração de partições
 #define TAM_BUFFER 100

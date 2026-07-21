@@ -8,7 +8,8 @@
 #include "Particoes.h"
 #include "Intercalacao.h"
 #include "Testes.h"
- 
+#include "HashProduto.h"
+
 int main() {
     /* ---------------------------------------------------------- */
     /* 1. ABERTURA DAS BASES (wb+ = cria do zero a cada execucao)  */
@@ -218,7 +219,70 @@ int main() {
     fclose(arqFunc);
     fclose(arqCli);
     /* arqProd foi fechado antes da ordenacao */
- 
-    printf("\nOperacoes concluidas com sucesso.\n");
-    return 0;
+
+/*
+ * TABELA HASH
+ */
+printf("\n=== TABELA HASH — PRODUTOS ===\n");
+
+/* Inicializa arquivo das gavetas */
+inicializaHashProduto("dados/produtos_hash.dat");
+
+/* Abre arquivos */
+FILE *gavetas = fopen("dados/produtos_hash.dat", "rb+");
+
+FILE *dadosHash = fopen("dados/produtos_hash_dados.dat", "rb+");
+if (!dadosHash)
+    dadosHash = fopen("dados/produtos_hash_dados.dat", "wb+");
+
+/* Insere produtos */
+printf("Inserindo produtos na Hash...\n");
+
+for (int i = 1; i <= 100; i++) {
+    char buffer[60];
+    sprintf(buffer, "Produto %d", i);
+
+    TProduto *p = produto(i, buffer, "Geral", 50, 10.0);
+    inserirHashProduto(p, gavetas, dadosHash);
+    free(p);
+}
+
+/* Busca */
+printf("Buscando produto codigo 10...\n");
+
+TRegHashProduto reg;
+if (buscarHashProduto(10, gavetas, dadosHash, &reg)) {
+    imprimeRegHashProduto(&reg);
+} else {
+    printf("Produto nao encontrado.\n");
+}
+
+/* Remocao */
+printf("Removendo produto codigo 10...\n");
+removerHashProduto(10, gavetas, dadosHash);
+
+/* Confirmacao da remocao */
+printf("Buscando novamente o produto 10...\n");
+if (!buscarHashProduto(10, gavetas, dadosHash, &reg)) {
+    printf("Produto removido com sucesso.\n");
+}
+
+/* Reinsercao para demonstrar reaproveitamento */
+printf("Inserindo novo produto (codigo 999) reutilizando espaco livre...\n");
+
+TProduto *novo = produto(999, "Produto Reutilizado", "Geral", 30, 99.90);
+inserirHashProduto(novo, gavetas, dadosHash);
+free(novo);
+
+/* Busca do novo produto */
+if (buscarHashProduto(999, gavetas, dadosHash, &reg)) {
+    printf("Espaco livre reutilizado com sucesso.\n");
+    imprimeRegHashProduto(&reg);
+}
+
+fclose(gavetas);
+fclose(dadosHash);
+
+printf("\nOperacoes concluidas com sucesso.\n");
+return 0;
 }
